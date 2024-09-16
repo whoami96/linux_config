@@ -2,21 +2,18 @@ call plug#begin()
 Plug 'tpope/vim-sensible'
 Plug 'junegunn/fzf.vim'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'scrooloose/nerdtree'
-Plug 'ryanoasis/vim-devicons'
-Plug 'philrunninger/nerdtree-visual-selection'
-Plug 'pearofducks/ansible-vim'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/syntastic'
 Plug 'scrooloose/nerdcommenter'
 Plug 'ervandew/supertab'
-Plug 'kien/ctrlp.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'godlygeek/tabular'
 Plug 'flazz/vim-colorschemes'
-Plug 'valloric/youcompleteme'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
+Plug 'philrunninger/nerdtree-visual-selection'
 call plug#end()
 
 " settings
@@ -28,7 +25,6 @@ filetype plugin on
 filetype indent on
 syntax on
 set number
-set cursorline
 set tabstop=4
 set expandtab
 set nobackup
@@ -47,12 +43,20 @@ set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx,
 set rtp+=/opt/homebrew/opt/fzf
 
 " neerdtree
-autocmd VimEnter * NERDTree
-autocmd VimEnter * wincmd p
+nnoremap <silent> <expr> <C-f> g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " vim-sensible
 runtime! plugin/sensible.vim
+
+" syntastic
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
 
 " Airline
 let g:airline#extensions#tabline#enabled = 1
@@ -60,28 +64,9 @@ let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
-" syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-" ansible-vim
-let g:ansible_unindent_after_newline = 1
-let g:ansible_yamlKeyName = 'yamlKey'
-let g:ansible_attribute_highlight = "ob"
-let g:ansible_name_highlight = 'd'
-let g:ansible_extra_keywords_highlight = 1
-let g:ansible_extra_keywords_highlight_group = 'Statement'
-let g:ansible_normal_keywords_highlight = 'Constant'
-let g:ansible_loop_keywords_highlight = 'Constant'
-let g:ansible_template_syntaxes = { '*.rb.j2': 'ruby' }
 
 " colorscheme
 let g:airline_theme='term'
 colorscheme darkzen
 highlight Pmenu ctermfg=15 ctermbg=0 guifg=#ffffff guibg=#000000
+
