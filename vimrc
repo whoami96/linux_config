@@ -24,7 +24,6 @@ filetype on
 filetype plugin on
 filetype indent on
 syntax on
-set number
 set tabstop=4
 set expandtab
 set nobackup
@@ -69,4 +68,3 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_theme='term'
 colorscheme darkzen
 highlight Pmenu ctermfg=15 ctermbg=0 guifg=#ffffff guibg=#000000
-
