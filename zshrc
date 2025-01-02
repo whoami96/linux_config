@@ -1,11 +1,15 @@
 # export
 export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 export PATH=$HOME/.cargo/env:$PATH
+export SHELL=/usr/bin/zsh
 export ZSH="$HOME/.oh-my-zsh"
 export LANG=pl_PL.UTF-8
 export EDITOR="vim"
 export GOPATH=$HOME/.go
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+export PATH=$PATH:/opt/pycharm-2024.3/bin/
+export PODMAN_COMPOSE_QUIET=1
+export PODMAN_EXTERNAL_COMPOSE=false
 
 # config
 ZSH_THEME="fino-custom"
@@ -34,6 +38,7 @@ plugins=(git git-prompt zsh-autosuggestions zsh-syntax-highlighting fast-syntax-
 alias "kubectl=kubecolor"
 alias "k=kubectl"
 alias "s=ssh"
+alias "op=openstack"
 alias "logir=sudo systemctl restart logid.service"
 
 # source omz
@@ -46,11 +51,10 @@ alias "kubectx=kubectl ctx"
 alias "kubens=kubectl ns"
 compdef kubecolor=kubectl
 
-
 # startup cmd
 fastfetch -c /home/whoami/.fastfetch/presets/examples/12.jsonc
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/vault vault
-
 complete -o nospace -C /usr/bin/terraform terraform
+complete -C '/usr/local/bin/aws_completer' aws
