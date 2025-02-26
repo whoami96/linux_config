@@ -3,13 +3,11 @@ export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 export PATH=$HOME/.cargo/env:$PATH
 export SHELL=/usr/bin/zsh
 export ZSH="$HOME/.oh-my-zsh"
-export LANG=pl_PL.UTF-8
 export EDITOR="vim"
 export GOPATH=$HOME/.go
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-export PATH=$PATH:/opt/pycharm-2024.3/bin/
 export PODMAN_COMPOSE_QUIET=1
-export PODMAN_EXTERNAL_COMPOSE=false
+export PODMAN_COMPOSE_EXE=podman-compose
 
 # config
 ZSH_THEME="fino-custom"
@@ -37,8 +35,12 @@ plugins=(git git-prompt zsh-autosuggestions zsh-syntax-highlighting fast-syntax-
 # aliases
 alias "kubectl=kubecolor"
 alias "k=kubectl"
+alias "kubectx=kubectl ctx"
+alias "kubens=kubectl ns"
 alias "s=ssh"
 alias "op=openstack"
+alias "code=codium"
+alias "yz=yazi"
 alias "logir=sudo systemctl restart logid.service"
 
 # source omz
