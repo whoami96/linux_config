@@ -1,118 +1,119 @@
 {
-    "diffEditor.wordWrap": "off",
-    "editor.accessibilitySupport": "off",
-    "editor.bracketPairColorization.enabled": true,
-    "editor.cursorBlinking": "expand",
-    "editor.cursorSmoothCaretAnimation": "on",
-    "editor.fontLigatures": true,
-    "editor.guides.bracketPairs": true,
-    "editor.wordWrap": "on",
-    "explorer.confirmDelete": false,
-    "explorer.confirmDragAndDrop": false,
-    "files.autoSave": "afterDelay",
-    "git.suggestSmartCommit": false,
-    "php.suggest.basic": false,
-    "redhat.telemetry.enabled": false,
-    "security.workspace.trust.untrustedFiles": "open",
-    "terminal.external.linuxExec": "terminator",
-    "terminal.external.osxExec": "iterm2.app",
-    "terminal.integrated.defaultProfile.linux": "zsh",
-    "window.commandCenter": true,
-    "window.autoDetectColorScheme": true,
-    "window.titleBarStyle": "custom",
-    "editor.renderLineHighlight": "none",
-    "workbench.iconTheme": "material-icon-theme",
-    "workbench.startupEditor": "none",
-    "git.ignoreLegacyWarning": true,
-    "settingsSync.ignoredSettings": [
-      "workbench.colorTheme"
-    ],
-    "python.analysis.diagnosticSeverityOverrides": {
-      "python.analysis.typeCheckingMode": "basic",
-      
-    },
-    "[python]": {
-      "editor.formatOnType": true,
-      "editor.defaultFormatter": "ms-python.autopep8",
-      "editor.formatOnSave": true
-      
-    },
-    "editor.tokenColorCustomizations": {
-      "textMateRules": [
-        {
-          "name": "One Dark italic",
-          "scope": [
-            "comment",
-            "entity.other.attribute-name",
-            "keyword",
-            "markup.underline.link",
-            "storage.modifier",
-            "storage.type",
-            "string.url",
-            "variable.language.super",
-            "variable.language.this"
-          ],
-          "settings": {
-            "fontStyle": "italic"
-          }
-        },
-        {
-          "name": "One Dark italic reset",
-          "scope": [
-            "keyword.operator",
-            "keyword.other.type",
-            "storage.modifier.import",
-            "storage.modifier.package",
-            "storage.type.built-in",
-            "storage.type.function.arrow",
-            "storage.type.generic",
-            "storage.type.java",
-            "storage.type.primitive"
-          ],
-          "settings": {
-            "fontStyle": ""
-          }
+  "diffEditor.wordWrap": "off",
+  "editor.accessibilitySupport": "off",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.cursorBlinking": "expand",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.fontLigatures": true,
+  "editor.guides.bracketPairs": true,
+  "editor.wordWrap": "on",
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "files.autoSave": "afterDelay",
+  "git.suggestSmartCommit": false,
+  "php.suggest.basic": false,
+  "redhat.telemetry.enabled": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "terminal.external.linuxExec": "terminator",
+  "terminal.external.osxExec": "iterm2.app",
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "window.commandCenter": true,
+  "window.autoDetectColorScheme": true,
+  "window.titleBarStyle": "custom",
+  "editor.renderLineHighlight": "none",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.startupEditor": "none",
+  "git.ignoreLegacyWarning": true,
+  "settingsSync.ignoredSettings": [
+    "workbench.colorTheme"
+  ],
+  "python.analysis.diagnosticSeverityOverrides": {
+    "python.analysis.typeCheckingMode": "basic",
+    
+  },
+  "[python]": {
+    "editor.formatOnType": true,
+    "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.formatOnSave": true
+    
+  },
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "name": "One Dark italic",
+        "scope": [
+          "comment",
+          "entity.other.attribute-name",
+          "keyword",
+          "markup.underline.link",
+          "storage.modifier",
+          "storage.type",
+          "string.url",
+          "variable.language.super",
+          "variable.language.this"
+        ],
+        "settings": {
+          "fontStyle": "italic"
         }
-      ]
-    },
-    "[css]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "application.shellEnvironmentResolutionTimeout": 60,
-    "git.confirmSync": false,
-    "git.openRepositoryInParentFolders": "always",
-    "[xml]": {
-      "editor.defaultFormatter": "DotJoshJohnson.xml"
-    },
-    "vs-kubernetes": {
-      "vs-kubernetes.crd-code-completion": "disabled",
-      "vscode-kubernetes.minikube-path-mac": "/Users/pawel_owczarczyk/.vs-kubernetes/tools/minikube/darwin-amd64/minikube"
-    },
-    "liveServer.settings.donotVerifyTags": true,
-    "terminal.integrated.fontFamily": "\"FiraCode Nerd Font\"",
-    "workbench.settings.applyToAllProfiles": [
-      "terminal.integrated.fontFamily",
-      "editor.fontFamily"
-    ],
-    "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
-    "editor.fontFamily": "'CaskaydiaCove Nerd Font'",
-    "terminal.integrated.defaultProfile.osx": "zsh",
-    "terminal.integrated.enableImages": true,
-    "workbench.colorTheme": "One Dark Pro Darker",
-    "hadolint.hadolintPath": "hadolint",
-    "hadolint.maxNumberOfProblems": 100,
-    "hadolint.outputLevel": "warning",
-    "hadolint.cliOptions": [
-      "--no-color",
-      "--ignore",
-      "DL3000"
-    ],
-    "terminal.integrated.sendKeybindingsToShell": true,
-    "[shellscript]": {
-      "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode"
-    },
-    "git.autofetch": true,
-    "workbench.preferredDarkColorTheme": "One Dark Pro Darker",
-    "makefile.configureOnOpen": true,
-  }
-  
+      },
+      {
+        "name": "One Dark italic reset",
+        "scope": [
+          "keyword.operator",
+          "keyword.other.type",
+          "storage.modifier.import",
+          "storage.modifier.package",
+          "storage.type.built-in",
+          "storage.type.function.arrow",
+          "storage.type.generic",
+          "storage.type.java",
+          "storage.type.primitive"
+        ],
+        "settings": {
+          "fontStyle": ""
+        }
+      }
+    ]
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "application.shellEnvironmentResolutionTimeout": 60,
+  "git.confirmSync": false,
+  "git.openRepositoryInParentFolders": "always",
+  "[xml]": {
+    "editor.defaultFormatter": "DotJoshJohnson.xml"
+  },
+  "vs-kubernetes": {
+    "vs-kubernetes.crd-code-completion": "disabled",
+    "vscode-kubernetes.minikube-path-mac": "/Users/pawel_owczarczyk/.vs-kubernetes/tools/minikube/darwin-amd64/minikube"
+  },
+  "liveServer.settings.donotVerifyTags": true,
+  "terminal.integrated.fontFamily": "\"FiraCode Nerd Font\"",
+  "workbench.settings.applyToAllProfiles": [
+    "terminal.integrated.fontFamily",
+    "editor.fontFamily"
+  ],
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "editor.fontFamily": "'CaskaydiaCove Nerd Font'",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.enableImages": true,
+  "workbench.colorTheme": "One Dark Pro Darker",
+  "hadolint.hadolintPath": "hadolint",
+  "hadolint.maxNumberOfProblems": 100,
+  "hadolint.outputLevel": "warning",
+  "hadolint.cliOptions": [
+    "--no-color",
+    "--ignore",
+    "DL3000"
+  ],
+  "terminal.integrated.sendKeybindingsToShell": true,
+  "[shellscript]": {
+    "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode"
+  },
+  "git.autofetch": true,
+  "workbench.preferredDarkColorTheme": "One Dark Pro Darker",
+  "makefile.configureOnOpen": true,
+  "window.customTitleBarVisibility": "auto",
+  "database-client.autoSync": true,
+}
