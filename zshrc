@@ -6,8 +6,6 @@ export ZSH="$HOME/.oh-my-zsh"
 export EDITOR="vim"
 export GOPATH=$HOME/.go
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-export PODMAN_COMPOSE_QUIET=1
-export PODMAN_COMPOSE_EXE=podman-compose
 
 # config
 ZSH_THEME="fino-custom"
@@ -30,7 +28,7 @@ export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 eval "$(pyenv init --path)"
 
 #plugins
-plugins=(git git-prompt zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting docker docker-compose dnf fzf minikube vscode kube-ps1 zsh-interactive-cd pyenv)
+plugins=(git git-prompt zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting zsh-autocomplete dnf fzf vscode kube-ps1 zsh-interactive-cd pyenv azure-cli)
 
 # aliases
 alias "kubectl=kubecolor"
@@ -39,18 +37,17 @@ alias "kubectx=kubectl ctx"
 alias "kubens=kubectl ns"
 alias "s=ssh"
 alias "op=openstack"
-alias "code=codium"
 alias "yz=yazi"
 alias "logir=sudo systemctl restart logid.service"
 
-# source omz
+# source
 source $ZSH/oh-my-zsh.sh
+source <(talosctl completion zsh)
+source <(kind completion zsh)
 
 # kubectl
 source <(kubectl completion zsh)
 alias "kubectl=kubecolor"
-alias "kubectx=kubectl ctx"
-alias "kubens=kubectl ns"
 compdef kubecolor=kubectl
 
 # startup cmd

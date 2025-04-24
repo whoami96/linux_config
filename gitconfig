@@ -91,7 +91,7 @@
     safecrlf = true
     ignoreCase = false
 	editor = vim
-	excludesFile = /home_dir/pawel_owczarczyk/.gitignore
+	excludesFile = /home/whoami/.gitignore
 
 
 [format]
