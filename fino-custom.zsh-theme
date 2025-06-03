@@ -2,8 +2,6 @@
 # Fino-time zsh theme with support for openstack cloud context and pyenv context.
 # Theme need supported Nerd Font.
 #
-#
-# Function to show active Python virtual environment or Conda environment
 # Function to show active Python virtual environment or Conda environment
 function virtualenv_info {
     # Check if pyenv environment is active
@@ -14,10 +12,10 @@ function virtualenv_info {
             echo "(\033[38;5;178m\ue73c\033[0m|$pyenv_env) "
         fi
     fi
-    
+
     # Check if Conda environment is active
     [ $CONDA_DEFAULT_ENV ] && echo "($CONDA_DEFAULT_ENV) "
-    
+
     # Check if a regular virtualenv is active (only if not using pyenv)
     if [ -n "$VIRTUAL_ENV" ] && [ -z "$pyenv_env" ]; then
         echo '('`basename $VIRTUAL_ENV`') '
@@ -42,8 +40,8 @@ function os_cloud_info {
     [[ -n $OS_CLOUD ]] && echo "(%{$fg[red]%}%{$reset_color%}|%{$fg[blue]%}$OS_CLOUD%{$reset_color%}) "
 }
 
-# Main prompt definition
-PROMPT="╭─% \$(kube_ps1) \$(virtualenv_info)\$(os_cloud_info)%{$FG[040]%}%n%{$reset_color%} %{$FG[239]%}at%{$reset_color%} %{$FG[033]%}$(box_name)%{$reset_color%} %{$FG[239]%}in%{$reset_color%} %{$terminfo[bold]$FG[226]%}%~%{$reset_color%}\$(git_prompt_info)\$(ruby_prompt_info) %D - %*
+# Main prompt definition (without kube_ps1)
+PROMPT="╭─% \$(virtualenv_info)\$(os_cloud_info)%{$FG[040]%}%n%{$reset_color%} %{$FG[239]%}at%{$reset_color%} %{$FG[033]%}$(box_name)%{$reset_color%} %{$FG[239]%}in%{$reset_color%} %{$terminfo[bold]$FG[226]%}%~%{$reset_color%}\$(git_prompt_info)\$(ruby_prompt_info) %D - %*
 ╰─$(prompt_char) "
 
 # Git prompt settings
