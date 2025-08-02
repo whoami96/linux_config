@@ -26,7 +26,7 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 eval "$(pyenv init --path)"
 
 #plugins
-plugins=(git git-prompt zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting dnf fzf vscode zsh-interactive-cd pyenv azure-cli)
+plugins=(git git-prompt zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting dnf fzf kubectl-autocomplete vscode zsh-interactive-cd pyenv azure-cli rust k3d)
 
 # aliases
 alias "kubectl=kubecolor"
@@ -36,10 +36,12 @@ alias "kubens=kubie ns"
 alias "s=ssh"
 alias "op=openstack"
 alias "yz=yazi"
+alias "logir=sudo systemctl restart logid.service"
+alias openv='pyenv activate openstack && export OS_CLOUD=$({ yq e ".clouds | keys | sort | .[]" ~/.config/openstack/clouds.yaml | { [ -n "$OS_CLOUD" ] && echo "$OS_CLOUD"; [ -n "$OS_CLOUD" ] && grep -v "^$OS_CLOUD$" || cat; }; } | fzf)'
+alias opexit='pyenv deactivate openstack && unset OS_CLOUD'
 
 # source
 source $ZSH/oh-my-zsh.sh
-source <(kind completion zsh)
 
 # kubectl
 source <(kubectl completion zsh)
@@ -57,3 +59,5 @@ complete -C '/usr/local/bin/aws_completer' aws
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+complete -o nospace -C /usr/bin/tofu tofu
