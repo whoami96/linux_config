@@ -1,0 +1,115 @@
+" ======================================================================
+" Vim config — same look & feel as the old one (darkzen + airline + nerdtree)
+" ======================================================================
+
+" --- Plugin manager (vim-plug) ----------------------------------------
+" Install vim-plug if missing:
+"   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+"     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+call plug#begin('~/.vim/plugged')
+
+Plug 'tpope/vim-sensible'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }   " cross-platform fzf binary
+Plug 'junegunn/fzf.vim'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'scrooloose/syntastic'
+Plug 'scrooloose/nerdcommenter'
+Plug 'ervandew/supertab'
+Plug 'godlygeek/tabular'
+Plug 'flazz/vim-colorschemes'         " contains `darkzen`
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
+Plug 'philrunninger/nerdtree-visual-selection'
+
+" Optional: transparent sudo read/write (:SudaWrite or open root-owned files)
+Plug 'lambdalisue/suda.vim'
+
+call plug#end()
+
+" --- Settings ----------------------------------------------------------
+set mouse=r
+set encoding=utf-8
+set nocompatible
+filetype on
+filetype plugin on
+filetype indent on
+syntax on
+
+set tabstop=4
+set expandtab
+set nobackup
+set scrolloff=10
+
+set incsearch
+set ignorecase
+set smartcase
+set showcmd
+set showmode
+set showmatch
+set hlsearch
+set history=1000
+set wildmenu
+set wildmode=list:longest
+set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx
+
+" If your terminal supports truecolor (most do)
+set termguicolors
+
+" --- FZF ---------------------------------------------------------------
+" (no need for rtp+=... thanks to the fzf plugin above)
+
+" --- NERDTree ----------------------------------------------------------
+nnoremap <silent> <expr> <C-f> g:NERDTree.IsOpen()
+      \ ? "\:NERDTreeClose<CR>"
+      \ : bufexists(expand('%')) ? "\:NERDTreeFind<CR>" : "\:NERDTree<CR>"
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" --- vim-sensible ------------------------------------------------------
+runtime! plugin/sensible.vim
+
+" --- Syntastic (statusline flags) -------------------------------------
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+" --- Airline -----------------------------------------------------------
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline_theme='term'
+
+" --- Colors ------------------------------------------------------------
+colorscheme darkzen
+" Popup menu — white on black for clarity
+highlight Pmenu ctermfg=15 ctermbg=0 guifg=#ffffff guibg=#000000
+
+" Transparent background (let terminal opacity/blur show through)
+highlight Normal     ctermbg=NONE guibg=NONE
+highlight NonText    ctermbg=NONE guibg=NONE
+highlight LineNr     ctermbg=NONE guibg=NONE
+highlight SignColumn ctermbg=NONE guibg=NONE
+highlight VertSplit  ctermbg=NONE guibg=NONE
+
+" Re-apply transparency if colorscheme reloads/overrides highlights
+augroup TransparentBG
+  autocmd!
+  autocmd ColorScheme * highlight Normal     ctermbg=NONE guibg=NONE
+  autocmd ColorScheme * highlight NonText    ctermbg=NONE guibg=NONE
+  autocmd ColorScheme * highlight LineNr     ctermbg=NONE guibg=NONE
+  autocmd ColorScheme * highlight SignColumn ctermbg=NONE guibg=NONE
+  autocmd ColorScheme * highlight VertSplit  ctermbg=NONE guibg=NONE
+augroup END
+
+" --- Sudo helpers (optional, no visual impact) ------------------------
+let g:suda_smart_edit = 1
+cmap w!! w !sudo tee % >/dev/null
+

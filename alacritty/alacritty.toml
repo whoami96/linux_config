@@ -1,0 +1,167 @@
+# ==========================================
+#  Alacritty — WhoAmI setup (Fedora / Linux)
+#  • Live reload on save
+#  • Starts tmux and auto-attaches to session "main"
+#  • Vi mode (Ctrl+Shift+Space), URL hints (Ctrl+Shift+O)
+#  • Copy/Paste: Ctrl+Shift+C / Ctrl+Shift+V
+#  • Search in scrollback: Ctrl+Shift+F / Ctrl+Shift+B
+#  • Fullscreen: F11
+#  • Font size: Ctrl+= / Ctrl+- / Ctrl+0 (reset)
+# ==========================================
+
+[general]
+live_config_reload = true
+
+[env]
+# Safer than "alacritty" for remote shells.
+TERM = "xterm-256color"
+
+[colors.primary]
+background = "#000000"
+foreground = "#ffffff"
+
+[font]
+size = 11
+
+[font.normal]
+family = "FiraCode Nerd Font"
+
+[font.bold_italic]
+family = "FiraCode Nerd Font"
+style = "Bold Italic"
+
+[font.italic]
+family = "FiraCode Nerd Font"
+style = "Light Italic"
+
+[font.offset]
+x = 0
+y = 0
+
+[window]
+# Fixed initial size; not maximized.
+dimensions = { columns = 105, lines = 35 }
+startup_mode = "Windowed"
+decorations = "Full"
+decorations_theme_variant = "Dark"
+dynamic_title = true
+dynamic_padding = true
+opacity = 0.88
+title = "Alacritty"
+class = { instance = "Alacritty", general = "Alacritty" }
+# Optional:
+# position = { x = 120, y = 80 }
+
+[scrolling]
+history = 50000
+multiplier = 3
+
+[selection]
+save_to_clipboard = true
+semantic_escape_chars = ",│`|:\"' ()[]{}<>‹›*\t"
+
+[cursor]
+style = { shape = "Beam", blinking = "Always" }
+# thickness = 0.2  # uncomment to tune beam thickness (0.1–1.0)
+
+[mouse]
+hide_when_typing = true
+
+[terminal.shell]
+# Start tmux and (re)attach to session "main".
+program = "tmux"
+args = ["new-session", "-A", "-s", "main"]
+
+# -------- URL hints overlay (Ctrl+Shift+O) --------
+[[hints.enabled]]
+command = "xdg-open"
+hyperlinks = true
+post_processing = true
+persist = false
+mouse.enabled = true
+binding = { key = "O", mods = "Control|Shift" }
+regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:|file:|git://|ssh:|ftp://)[^\\u0000-\\u001F\\u007F-\\u009F<>\"\\s{-}\\^⟨⟩`\\\\]+"
+
+# -------------------- Key bindings --------------------
+
+# Copy/Paste
+[[keyboard.bindings]]
+action = "Copy"
+key = "C"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+action = "Paste"
+key = "V"
+mods = "Control|Shift"
+
+# Scrollback search
+[[keyboard.bindings]]
+action = "SearchForward"
+key = "F"
+mods = "Control|Shift"
+
+[[keyboard.bindings]]
+action = "SearchBackward"
+key = "B"
+mods = "Control|Shift"
+
+# Vi mode (navigate scrollback; / to search; Enter opens hyperlink)
+[[keyboard.bindings]]
+action = "ToggleViMode"
+key = "Space"
+mods = "Control|Shift"
+
+# Clear selection in Vi mode
+[[keyboard.bindings]]
+action = "ClearSelection"
+key = "C"
+mods = "Control|Shift"
+mode = "Vi"
+
+# Paste Primary Selection (X11/Wayland)
+[[keyboard.bindings]]
+action = "PasteSelection"
+key = "Insert"
+mods = "Shift"
+
+# Font size controls
+[[keyboard.bindings]]
+action = "ResetFontSize"
+key = "Key0"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "IncreaseFontSize"
+key = "Equals"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "IncreaseFontSize"
+key = "Plus"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "IncreaseFontSize"
+key = "NumpadAdd"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "DecreaseFontSize"
+key = "Minus"
+mods = "Control"
+
+[[keyboard.bindings]]
+action = "DecreaseFontSize"
+key = "NumpadSubtract"
+mods = "Control"
+
+# Fullscreen
+[[keyboard.bindings]]
+action = "ToggleFullscreen"
+key = "F11"
+
+# Middle-click paste (Primary Selection)
+[[mouse.bindings]]
+action = "PasteSelection"
+mouse = "Middle"
