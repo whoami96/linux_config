@@ -112,4 +112,3 @@ augroup END
 " --- Sudo helpers (optional, no visual impact) ------------------------
 let g:suda_smart_edit = 1
 cmap w!! w !sudo tee % >/dev/null
-

@@ -91,4 +91,3 @@ keybind = ctrl+enter=toggle_fullscreen
 
 # Quick terminal (global shortcut)
 keybind = global:ctrl+k=toggle_quick_terminal
-

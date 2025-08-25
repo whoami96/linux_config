@@ -59,4 +59,3 @@ ZSH_THEME_GIT_PROMPT_CLEAN="%{$FG[040]%}✔"
 # Ruby prompt
 ZSH_THEME_RUBY_PROMPT_PREFIX=" %{$FG[239]%}using%{$FG[243]%} ‹"
 ZSH_THEME_RUBY_PROMPT_SUFFIX="›%{$reset_color%}"
-
