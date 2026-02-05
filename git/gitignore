@@ -1,0 +1,99 @@
+# Linux OS
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+#Continue
+.continue/
+
+# Visual Studio Code
+.vscode/
+.history/
+
+# PyCharm
+.idea/
+*.iml
+
+# Python
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.swo
+__pycache__/
+*.env
+.env
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+*.egg-info/
+.eggs/
+.build/
+.tox/
+.coverage
+*.cover
+.hypothesis/
+.pytest_cache/
+.cache/
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# Docker
+*.log
+*.tmp
+*.bak
+docker-compose.override.yml
+.env.docker
+*.tar
+
+# Kubernetes
+.kube/
+*.kubeconfig
+
+# Ansible
+*.retry
+*.vault
+.inventory
+secrets.yml
+
+# Base
+*.log
+*.bak
+*.tmp
+*.out
+*.pid
+*.swp
+*.orig
+*.lock
+*.tar.gz
+*.zip
+*.gz
+*.7z
+*.rar
+*.bak
+
+# TMP
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Text files
+coverage.xml
+test-reports/
+
+# private keys and certs
+*.pem
+*.key
+*.crt
+
+# IDE
+*~*
+*.sublime-workspace
+*.sublime-project

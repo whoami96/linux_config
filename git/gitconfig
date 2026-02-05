@@ -1,0 +1,115 @@
+# ==========================================================
+# Git configuration — Paweł Owczarczyk
+# ==========================================================
+
+[user]
+    name = Pawel Owczarczyk
+    email = pawel@owczarczyk.it
+    useConfigOnly = true
+
+[color]
+    ui = true
+    branch = auto
+    diff = auto
+    interactive = auto
+    status = auto
+
+[core]
+    autocrlf = false
+    safecrlf = true
+    ignoreCase = false
+    quotepath = false
+    pager = less -FRSX
+    editor = vim
+    excludesFile = /home/whoami/.gitignore
+    attributesFile = /home/whoami/.gitattributes
+
+[init]
+    defaultBranch = main
+
+[format]
+    pretty = format:'%C(green)%h%Creset %C(cyan)%ad%x08%x08%x08%x08%x08%x08%Creset -%C(yellow)%d%Creset %s %C(green)[%Creset%C(cyan)%an%Creset%C(green)]%Creset'
+
+[grep]
+    linenumber = true
+
+[log]
+    date = iso
+
+[branch "master"]
+    mergeoptions = --no-ff --no-commit
+
+# ----------------------------------------------------------
+# Aliases
+# ----------------------------------------------------------
+[alias]
+    # Helpers
+    datetime = !date +'%Y-%m-%d %H:%M:%S' && :
+    s = status -sb
+    st = status
+    ls = ls-files
+    rso = remote show origin
+    co = checkout
+    br = branch
+    br-current = rev-parse --abbrev-ref HEAD
+
+    # Diff & staging
+    addi = add --patch
+    unstage = reset HEAD --
+    ds = diff --staged
+    staged = diff --staged
+    du = diff
+    unstaged = diff
+    dsw = diff --staged -w
+    duw = diff -w
+    wds = diff --staged --color-words
+    wstaged = diff --staged --color-words
+    wdu = diff --color-words
+    wunstaged = diff --color-words
+
+    # Commits
+    ci = commit
+    cm = commit
+    amend = commit --amend
+    pick = cherry-pick
+
+    # History & logs
+    graph = log --graph --all
+    hist = log --first-parent
+    last = log -1 --stat
+    contributors = shortlog -s -n --no-merges
+    search = branch -a --contains
+
+    # Branch management
+    br-arch = !                                                \
+        git fetch origin --prune --tags                     && \
+        git rev-parse --verify origin/$1                    && \
+        git tag archive/$1 origin/$1 -m \"`git datetime`\"  && \
+        git push origin archive/$1                          && \
+        git push origin :$1                                 && \
+        git remote prune origin                             && :
+
+    # Pull / Push
+    puff = pull --ff
+    poc = !git push origin `git br-current`
+    puc = !git push upstream `git br-current`
+    boom = !git poc --force-with-lease && :
+    kaboom = !git add -A . && git amend --no-edit --allow-empty && git boom && :
+
+    # Tags & cleanup
+    update = fetch --all --prune --tags
+    tags = tag -n
+    type = cat-file -t
+    dump = cat-file -p
+    clear = !          \
+        git update  && \
+        git gc      && :
+
+# ----------------------------------------------------------
+# Git LFS
+# ----------------------------------------------------------
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
