@@ -224,7 +224,7 @@ require("lazy").setup({
 
       harpoon:setup({
         settings = {
-          save_on_toggle = true, -- Save marks without requiring :w
+          save_on_toggle = true,   -- Save marks without requiring :w
           sync_on_ui_close = true, -- Also sync when closing UI
         },
       })
