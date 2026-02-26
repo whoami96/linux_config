@@ -1,6 +1,6 @@
 -- ==========================================================
--- LEAN nvim v3.5 - Pawel Owczarczyk (Asseco Cloud)
--- NVIM v0.11.5+
+-- LEAN nvim v3.6 - Pawel Owczarczyk (Asseco Cloud)
+-- NVIM v0.11.5+ | Optimized for Cloud Engineering
 -- ==========================================================
 
 -- 1) GLOBAL OPTIONS
@@ -32,7 +32,7 @@ vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { silent = true, desc = "Pre
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { silent = true, desc = "Next diagnostic" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { silent = true, desc = "Diagnostics float" })
 
--- Auto-float on CursorHold, but only if there are diagnostics on the current line
+-- Auto-float on CursorHold for diagnostics under cursor
 vim.api.nvim_create_autocmd("CursorHold", {
   callback = function()
     local pos = vim.api.nvim_win_get_cursor(0)
@@ -60,7 +60,7 @@ if not uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- 2.1) PER-GIT-REPO: set cwd to repo root (Harpoon + sessions per repo)
+-- 2.1) PER-GIT-REPO: Auto-set CWD to repo root
 local function get_git_root(startpath)
   local gitdir = vim.fs.find(".git", { path = startpath, upward = true })[1]
   if gitdir then
@@ -71,17 +71,11 @@ end
 
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
   callback = function(args)
-    if vim.bo[args.buf].buftype ~= "" then
-      return
-    end
+    if vim.bo[args.buf].buftype ~= "" then return end
     local file = vim.api.nvim_buf_get_name(args.buf)
-    if file == "" then
-      return
-    end
+    if file == "" then return end
     local dir = vim.fs.dirname(file)
-    if not dir or dir == "" then
-      return
-    end
+    if not dir or dir == "" then return end
     local root = get_git_root(dir)
     if root and root ~= "" and vim.fn.getcwd() ~= root then
       vim.api.nvim_set_current_dir(root)
@@ -89,48 +83,22 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
   end,
 })
 
--- Helper: locate directory containing compile_commands.json (CMake)
+-- Helper: locate directory containing compile_commands.json
 local function find_compile_commands_dir(startpath)
   local candidates = {
-    "build",
-    "Build",
-    "build-debug",
-    "build-release",
-    ".build",
-    "cmake-build-debug",
-    "cmake-build-release",
+    "build", "Build", "build-debug", "build-release", ".build",
+    "cmake-build-debug", "cmake-build-release",
   }
-
-  -- Common case: build dir inside project (search upward a bit)
   local dir = startpath
   for _ = 1, 10 do
     for _, c in ipairs(candidates) do
       local p = dir .. "/" .. c .. "/compile_commands.json"
-      if uv.fs_stat(p) then
-        return dir .. "/" .. c
-      end
+      if uv.fs_stat(p) then return dir .. "/" .. c end
     end
     local parent = vim.fn.fnamemodify(dir, ":h")
-    if parent == dir or parent == "" then
-      break
-    end
+    if parent == dir or parent == "" then break end
     dir = parent
   end
-
-  -- Fallback: compile_commands.json directly in some parent
-  dir = startpath
-  for _ = 1, 10 do
-    local p = dir .. "/compile_commands.json"
-    if uv.fs_stat(p) then
-      return dir
-    end
-    local parent = vim.fn.fnamemodify(dir, ":h")
-    if parent == dir or parent == "" then
-      break
-    end
-    dir = parent
-  end
-
   return nil
 end
 
@@ -147,7 +115,6 @@ require("lazy").setup({
     end,
   },
 
-  -- Ensure devicons are available for statusline/icons
   { "nvim-tree/nvim-web-devicons", lazy = true },
 
   {
@@ -162,33 +129,15 @@ require("lazy").setup({
     build = ":TSUpdate",
     opts = {
       ensure_installed = {
-        "lua",
-        "vim",
-        "regex",
-        "bash",
-        "python",
-        "yaml",
-        "json",
-        "markdown",
-        "markdown_inline",
-        "dockerfile",
-        "terraform",
-        "hcl",
-        "go",
-        "gomod",
-        "gosum",
-        "rust",
-        "c",
+        "lua", "vim", "regex", "bash", "python", "yaml", "json",
+        "markdown", "markdown_inline", "dockerfile", "terraform",
+        "hcl", "go", "gomod", "gosum", "rust", "c",
       },
       highlight = { enable = true },
     },
     config = function(_, opts)
       local ok, ts = pcall(require, "nvim-treesitter.configs")
-      if not ok then
-        vim.notify("nvim-treesitter is not available (not installed?)", vim.log.levels.WARN)
-        return
-      end
-      ts.setup(opts)
+      if ok then ts.setup(opts) end
     end,
   },
 
@@ -199,7 +148,6 @@ require("lazy").setup({
     dependencies = { "nvim-tree/nvim-web-devicons" },
   },
 
-  -- Telescope (+ Harpoon extension)
   {
     "nvim-telescope/telescope.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
@@ -209,91 +157,73 @@ require("lazy").setup({
         defaults = { file_ignore_patterns = { "%.git/" } },
         pickers = { find_files = { hidden = true } },
       })
-      -- Harpoon ↔ Telescope: :Telescope harpoon marks
       pcall(telescope.load_extension, "harpoon")
     end,
   },
 
-  -- Harpoon2 (auto-save + keymaps 1..9)
   {
     "ThePrimeagen/harpoon",
     branch = "harpoon2",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       local harpoon = require("harpoon")
-
-      harpoon:setup({
-        settings = {
-          save_on_toggle = true,   -- Save marks without requiring :w
-          sync_on_ui_close = true, -- Also sync when closing UI
-        },
-      })
-
-      -- Add / menu
-      vim.keymap.set("n", "<leader>a", function()
-        harpoon:list():add()
-      end, { desc = "Harpoon add file" })
-
-      vim.keymap.set("n", "<leader>h", function()
-        harpoon.ui:toggle_quick_menu(harpoon:list())
-      end, { desc = "Harpoon menu" })
-
-      -- Jump 1..9
+      harpoon:setup({ settings = { save_on_toggle = true, sync_on_ui_close = true } })
+      vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end, { desc = "Harpoon add file" })
+      vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end,
+        { desc = "Harpoon menu" })
       for i = 1, 9 do
-        vim.keymap.set("n", "<leader>" .. i, function()
-          harpoon:list():select(i)
-        end, { desc = "Harpoon to file " .. i })
+        vim.keymap.set("n", "<leader>" .. i, function() harpoon:list():select(i) end, { desc = "Harpoon to file " .. i })
       end
-
-      -- Prev/Next
-      vim.keymap.set("n", "<leader>[", function()
-        harpoon:list():prev({ ui_nav_wrap = true })
-      end, { desc = "Harpoon prev" })
-
-      vim.keymap.set("n", "<leader>]", function()
-        harpoon:list():next({ ui_nav_wrap = true })
-      end, { desc = "Harpoon next" })
-
-      -- Harpoon in Telescope
-      vim.keymap.set("n", "<leader>fh", "<cmd>Telescope harpoon marks<cr>", { desc = "Harpoon marks (Telescope)" })
     end,
   },
 
-  -- SESSIONS (restore per-cwd -> per git repo thanks to autocmd above)
+  -- UTILITIES
+  { "numToStr/Comment.nvim",       opts = {} }, -- gcc to comment line, gc to comment selection
+  { "folke/todo-comments.nvim",    dependencies = { "nvim-lua/plenary.nvim" }, opts = {} },
+  { "folke/persistence.nvim",      event = "BufReadPre",                       opts = {} },
+
+  -- TERMINAL (Floating)
   {
-    "folke/persistence.nvim",
-    event = "BufReadPre",
-    opts = {},
+    'akinsho/toggleterm.nvim',
+    version = "*",
+    config = function()
+      require("toggleterm").setup({
+        open_mapping = [[<C-\>]],
+        direction = 'float',
+        float_opts = { border = 'curved', winblend = 3 },
+      })
+    end
   },
 
-  -- LSP
+  -- GIT INTEGRATION (Signs & Blame)
+  {
+    "lewis6991/gitsigns.nvim",
+    opts = {
+      signs = { add = { text = '┃' }, change = { text = '┃' }, delete = { text = '_' } },
+      on_attach = function(bufnr)
+        local gs = package.loaded.gitsigns
+        local function bmap(mode, l, r, desc) vim.keymap.set(mode, l, r, { buffer = bufnr, desc = desc }) end
+        bmap('n', ']c', function() gs.next_hunk() end, "Next Git change")
+        bmap('n', '[c', function() gs.prev_hunk() end, "Prev Git change")
+        bmap('n', '<leader>gp', gs.preview_hunk, "Preview Git hunk")
+        bmap('n', '<leader>gb', function() gs.blame_line { full = true } end, "Git blame line")
+        bmap('n', '<leader>gr', gs.reset_hunk, "Reset Git hunk")
+      end
+    }
+  },
+
+  -- LSP CONFIGURATION
   {
     "neovim/nvim-lspconfig",
-    dependencies = {
-      "williamboman/mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
-      "hrsh7th/cmp-nvim-lsp",
-    },
+    dependencies = { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim", "hrsh7th/cmp-nvim-lsp" },
     config = function()
       require("mason").setup()
-
       local lspconfig = require("lspconfig")
       local mlsp = require("mason-lspconfig")
-
-      local servers = {
-        "ansiblels",
-        "terraformls",
-        "yamlls",
-        "pyright",
-        "lua_ls",
-        "gopls",
-        "rust_analyzer",
-        "clangd",
-      }
-
+      local servers = { "ansiblels", "terraformls", "yamlls", "pyright", "lua_ls", "gopls", "rust_analyzer", "clangd" }
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-      local function on_attach(_, bufnr)
+      local on_attach = function(_, bufnr)
         local bopts = { buffer = bufnr, silent = true }
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, bopts)
         vim.keymap.set("n", "K", vim.lsp.buf.hover, bopts)
@@ -302,64 +232,24 @@ require("lazy").setup({
         vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, bopts)
       end
 
-      local server_opts = {
-        gopls = {
-          settings = {
-            gopls = {
-              gofumpt = true,
-              staticcheck = true,
-              analyses = {
-                nilness = true,
-                unusedparams = true,
-                unusedwrite = true,
-                useany = true,
-              },
-            },
-          },
-        },
-
-        rust_analyzer = {
-          settings = {
-            ["rust-analyzer"] = {
-              cargo = { allFeatures = true },
-              checkOnSave = { command = "clippy" },
-              procMacro = { enable = true },
-            },
-          },
-        },
-
-        clangd = {
-          cmd = {
-            "clangd",
-            "--background-index",
-            "--clang-tidy",
-            "--completion-style=detailed",
-            "--header-insertion=iwyu",
-            "--pch-storage=memory",
-          },
-          on_new_config = function(new_config, new_root_dir)
-            local ccdir = find_compile_commands_dir(new_root_dir)
-            if ccdir then
-              new_config.init_options = new_config.init_options or {}
-              new_config.init_options.compilationDatabasePath = ccdir
-            end
-          end,
-        },
-      }
-
-      local function setup_server(server_name)
-        local opts = server_opts[server_name] or {}
-        opts.capabilities = capabilities
-        opts.on_attach = on_attach
-        lspconfig[server_name].setup(opts)
-      end
-
-      -- Modern mason-lspconfig v2+ approach: single setup path (no setup_handlers fallback)
       mlsp.setup({
         ensure_installed = servers,
         handlers = {
           function(server_name)
-            setup_server(server_name)
+            local opts = { capabilities = capabilities, on_attach = on_attach }
+            -- Ansible special mapping
+            if server_name == "ansiblels" then opts.filetypes = { "yaml.ansible", "ansible" } end
+            -- Clangd CMake integration
+            if server_name == "clangd" then
+              opts.on_new_config = function(new_config, new_root_dir)
+                local ccdir = find_compile_commands_dir(new_root_dir)
+                if ccdir then
+                  new_config.init_options = new_config.init_options or {}
+                  new_config.init_options.compilationDatabasePath = ccdir
+                end
+              end
+            end
+            lspconfig[server_name].setup(opts)
           end,
         },
       })
@@ -372,61 +262,63 @@ require("lazy").setup({
     dependencies = { "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },
     config = function()
       local cmp = require("cmp")
-      local luasnip = require("luasnip")
-
       cmp.setup({
-        snippet = { expand = function(args) luasnip.lsp_expand(args.body) end },
+        snippet = { expand = function(args) require("luasnip").lsp_expand(args.body) end },
         mapping = cmp.mapping.preset.insert({
           ["<CR>"] = cmp.mapping.confirm({ select = true }),
-          ["<C-Space>"] = cmp.mapping.complete(),
+          ["<C-Space>"] = cmp
+              .mapping.complete()
         }),
-        sources = cmp.config.sources(
-          { { name = "nvim_lsp" }, { name = "luasnip" } },
-          { { name = "buffer" } }
-        ),
+        sources = cmp.config.sources({ { name = "nvim_lsp" }, { name = "luasnip" } }, { { name = "buffer" } }),
       })
     end,
   },
-}, {
-  performance = { rtp = { disabled_plugins = { "netrw", "netrwPlugin", "tutor" } } },
-})
+}, { performance = { rtp = { disabled_plugins = { "netrw", "netrwPlugin", "tutor" } } } })
 
--- 4) KEYMAPS (yours)
+-- 4) KEYMAPS
 local map = vim.keymap.set
-map("n", "-", "<CMD>Oil<CR>")
-map("n", "<leader>w", "<cmd>w<cr>")
-map("i", "jk", "<Esc>")
-map("n", "<leader>ff", "<cmd>Telescope find_files<cr>")
-map("n", "<leader>fg", "<cmd>Telescope live_grep<cr>")
+map("n", "-", "<CMD>Oil<CR>")       -- Browse directories like text
+map("n", "<leader>w", "<cmd>w<cr>") -- Save file
+map("i", "jk", "<Esc>")             -- Fast escape
 
--- Sessions (persistence.nvim)
-vim.keymap.set("n", "<leader>qs", function()
-  require("persistence").load()
-end, { desc = "Restore session" })
+-- Telescope
+map("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Find Files" })
+map("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { desc = "Live Grep" })
 
-vim.keymap.set("n", "<leader>ql", function()
-  require("persistence").load({ last = true })
-end, { desc = "Restore last session" })
+-- ToggleTerm & LazyGit
+map("n", "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", { desc = "Terminal Floating" })
+local Terminal = require('toggleterm.terminal').Terminal
+local lazygit = Terminal:new({ cmd = "lazygit", hidden = true, direction = "float" })
+function _lazygit_toggle() lazygit:toggle() end
 
-vim.keymap.set("n", "<leader>qd", function()
-  require("persistence").stop()
-end, { desc = "Stop session saving" })
+map("n", "<leader>gg", "<cmd>lua _lazygit_toggle()<CR>", { desc = "LazyGit" })
 
--- Ansible filetype detection
+-- Terminal shell keymaps (navigation & escape)
+function _G.set_terminal_keymaps()
+  local opts = { buffer = 0 }
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+  vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+  vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+  vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+end
+
+vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+
+-- Persistence / Sessions
+map("n", "<leader>qs", function() require("persistence").load() end, { desc = "Restore session" })
+
+-- Filetype detection (Ansible & OpenTofu)
 vim.filetype.add({
+  extension = { tofu = "terraform", tf = "terraform" },
   pattern = {
     [".*/playbooks/.*%.ya?ml"] = "yaml.ansible",
     [".*/roles/.*%.ya?ml"] = "yaml.ansible",
-    ["site%.ya?ml"] = "yaml.ansible",
+    ["site%.ya?ml"] = "yaml.ansible"
   },
 })
-
--- Use YAML Treesitter parser for Ansible YAML filetype
 vim.treesitter.language.register("yaml", "yaml.ansible")
 
 -- Format on save (LSP)
-vim.api.nvim_create_autocmd("BufWritePre", {
-  callback = function()
-    pcall(vim.lsp.buf.format, { async = false })
-  end,
-})
+vim.api.nvim_create_autocmd("BufWritePre", { callback = function() pcall(vim.lsp.buf.format, { async = false }) end })
