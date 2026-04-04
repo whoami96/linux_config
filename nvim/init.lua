@@ -109,14 +109,42 @@ require("lazy").setup({
     config = function()
       require("mason").setup({ ui = { border = "rounded" } })
       local lspconfig = require("lspconfig")
+      
       require("mason-lspconfig").setup({
-        ensure_installed = { "ansiblels", "terraformls", "yamlls", "pyright", "lua_ls", "gopls" },
+        -- Dodajemy ruff do listy
+        ensure_installed = { "ansiblels", "terraformls", "yamlls", "pyright", "lua_ls", "gopls", "ruff" },
         handlers = {
           function(server_name)
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
-            lspconfig[server_name].setup({ capabilities = capabilities })
+            
+            -- Specyficzna konfiguracja dla Pyright, aby nie gryzł się z Ruffem
+            if server_name == "pyright" then
+              lspconfig.pyright.setup({
+                capabilities = capabilities,
+                settings = {
+                  pyright = {
+                    -- Używamy Ruffa do organizowania importów, więc wyłączamy to w Pyright
+                    disableOrganizeImports = true,
+                  },
+                  python = {
+                    analysis = { ignore = { '*' } }, -- Opcjonalnie: pozwól Ruffowi na diagnostykę
+                  }
+                }
+              })
+            else
+              lspconfig[server_name].setup({ capabilities = capabilities })
+            end
           end,
         },
+      })
+
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        pattern = "*.py",
+        callback = function()
+          vim.lsp.buf.format({ async = false })
+          -- Opcjonalnie: ruff organize imports
+          vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } }, apply = true })
+        end,
       })
     end,
   },
