@@ -3,11 +3,6 @@
 #  • UV, Mise, NVM, Cargo, Go, Docker, K3d
 # ==========================================================
 
-# --- Fix for Alacritty/Ghostty (autostart Tmux) ---
-if [[ -z "$TMUX" && ( "$ALACRITTY_WINDOW_ID" || "$TERM_PROGRAM" == "ghostty" ) ]]; then
-    tmux attach-session -t main 2>/dev/null || tmux new-session -s main
-fi
-
 # --- PATH & ENV ---
 export PATH="$HOME/.cargo/bin:$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
 
