@@ -1,45 +1,38 @@
-# ==========================================
-#  Alacritty — WhoAmI setup (Fedora / Linux)
-#  • Live reload on save
-#  • Starts tmux and auto-attaches to session "main"
-#  • Vi mode (Ctrl+Shift+Space), URL hints (Ctrl+Shift+O)
-#  • Copy/Paste: Ctrl+Shift+C / Ctrl+Shift+V
-#  • Search in scrollback: Ctrl+Shift+F / Ctrl+Shift+B
-#  • Fullscreen: F11
-#  • Font size: Ctrl+= / Ctrl+- / Ctrl+0 (reset)
-# ==========================================
+# ==============================================================================
+# Alacritty — WhoAmI setup (Ubuntu 24.04)
+# Hardware: Thinkpad T490
+# Version: 0.13.2
+# ==============================================================================
 
-[general]
 live_config_reload = true
 
 [env]
-# Safer than "alacritty" for remote shells.
 TERM = "xterm-256color"
-
-[colors.primary]
-background = "#000000"
-foreground = "#ffffff"
 
 [font]
 size = 11
 
 [font.normal]
-family = "FiraCode Nerd Font"
+family = "UbuntuSansMono Nerd Font"
+style = "Regular"
 
-[font.bold_italic]
-family = "FiraCode Nerd Font"
-style = "Bold Italic"
+[font.bold]
+family = "UbuntuSansMono Nerd Font"
+style = "Bold"
 
 [font.italic]
-family = "FiraCode Nerd Font"
-style = "Light Italic"
+family = "UbuntuSansMono Nerd Font"
+style = "Italic"
 
-[font.offset]
-x = 0
-y = 0
+[font.bold_italic]
+family = "UbuntuSansMono Nerd Font"
+style = "Bold Italic"
+
+[colors.primary]
+background = "#000000"
+foreground = "#ffffff"
 
 [window]
-# Fixed initial size; not maximized.
 dimensions = { columns = 105, lines = 35 }
 startup_mode = "Windowed"
 decorations = "Full"
@@ -49,8 +42,6 @@ dynamic_padding = true
 opacity = 0.88
 title = "Alacritty"
 class = { instance = "Alacritty", general = "Alacritty" }
-# Optional:
-# position = { x = 120, y = 80 }
 
 [scrolling]
 history = 50000
@@ -62,15 +53,9 @@ semantic_escape_chars = ",│`|:\"' ()[]{}<>‹›*\t"
 
 [cursor]
 style = { shape = "Beam", blinking = "Always" }
-# thickness = 0.2  # uncomment to tune beam thickness (0.1–1.0)
 
 [mouse]
 hide_when_typing = true
-
-[terminal.shell]
-# Start tmux and (re)attach to session "main".
-program = "tmux"
-args = ["new-session", "-A", "-s", "main"]
 
 # -------- URL hints overlay (Ctrl+Shift+O) --------
 [[hints.enabled]]
@@ -106,20 +91,19 @@ action = "SearchBackward"
 key = "B"
 mods = "Control|Shift"
 
-# Vi mode (navigate scrollback; / to search; Enter opens hyperlink)
+# Vi mode
 [[keyboard.bindings]]
 action = "ToggleViMode"
 key = "Space"
 mods = "Control|Shift"
 
-# Clear selection in Vi mode
 [[keyboard.bindings]]
 action = "ClearSelection"
 key = "C"
 mods = "Control|Shift"
 mode = "Vi"
 
-# Paste Primary Selection (X11/Wayland)
+# Paste Primary Selection
 [[keyboard.bindings]]
 action = "PasteSelection"
 key = "Insert"
@@ -161,7 +145,7 @@ mods = "Control"
 action = "ToggleFullscreen"
 key = "F11"
 
-# Middle-click paste (Primary Selection)
+# Middle-click paste
 [[mouse.bindings]]
 action = "PasteSelection"
 mouse = "Middle"

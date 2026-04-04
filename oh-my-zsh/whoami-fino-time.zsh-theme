@@ -1,30 +1,45 @@
 # ==========================================================
 # Oh My Zsh Theme — whoami-fino
 # Author: Paweł Owczarczyk <pawel@owczarczyk.it>
-# Version: 1.0
-# Date: 24.08.2025
-# Fork https://github.com/ohmyzsh/ohmyzsh/blob/master/themes/fino-time.zsh-theme
-# Description: Fino-time fork with OpenStack cloud context and
-# pyenv/conda/virtualenv indicators. Requires a Nerd Font.
+# Version: 1.1 (Fixed OpenStack Redundancy)
 # ==========================================================
 
 # Show active Python environment (pyenv > conda > virtualenv)
 function virtualenv_info {
-    # pyenv active?
-    if type -p pyenv &>/dev/null; then
-        local pyenv_env=$(pyenv version-name 2>/dev/null)
+    local env_name=""
+    local pyenv_env=""
+
+    # 1. pyenv active?
+    if type pyenv &>/dev/null; then
+        pyenv_env=$(pyenv version-name 2>/dev/null)
         if [[ -n "$pyenv_env" && "$pyenv_env" != "system" ]]; then
-            # Python icon (darker yellow) + env name
-            echo "(\033[38;5;178m\ue73c\033[0m|$pyenv_env) "
+            env_name="$pyenv_env"
         fi
     fi
 
-    # conda active?
-    [ $CONDA_DEFAULT_ENV ] && echo "($CONDA_DEFAULT_ENV) "
+    # 2. plain virtualenv/uv active? (if no pyenv or pyenv is system)
+    if [[ -z "$env_name" && -n "$VIRTUAL_ENV" ]]; then
+        env_name=$(basename "$VIRTUAL_ENV")
+        # Jeśli uv stworzył folder .venv, pokaż nazwę katalogu projektu
+        if [[ "$env_name" == ".venv" ]]; then
+            env_name=$(basename "$(dirname "$VIRTUAL_ENV")")
+        fi
+    fi
 
-    # plain virtualenv active (only if not using pyenv)
-    if [ -n "$VIRTUAL_ENV" ] && [ -z "$pyenv_env" ]; then
-        echo '('`basename $VIRTUAL_ENV`') '
+    # 3. Conda (fallback)
+    if [[ -z "$env_name" && -n "$CONDA_DEFAULT_ENV" ]]; then
+        env_name="$CONDA_DEFAULT_ENV"
+    fi
+
+    # --- LOGIKA UKRYWANIA DLA OPENSTACK ---
+    # Jeśli nazwa env to "openstack" i mamy aktywne OS_CLOUD, nie pokazujemy tego segmentu
+    if [[ -n "$OS_CLOUD" && "$env_name" == "openstack" ]]; then
+        return
+    fi
+
+    # Wyświetlanie, jeśli coś znaleziono
+    if [[ -n "$env_name" ]]; then
+        echo "(\033[38;5;178m\ue73c\033[0m|$env_name) "
     fi
 }
 
@@ -46,7 +61,7 @@ function os_cloud_info {
     [[ -n $OS_CLOUD ]] && echo "(%{$fg[red]%}%{$reset_color%}|%{$fg[blue]%}$OS_CLOUD%{$reset_color%}) "
 }
 
-# Two-line prompt (no kube_ps1)
+# Two-line prompt
 PROMPT="╭─% \$(virtualenv_info)\$(os_cloud_info)%{$FG[040]%}%n%{$reset_color%} %{$FG[239]%}at%{$reset_color%} %{$FG[033]%}$(box_name)%{$reset_color%} %{$FG[239]%}in%{$reset_color%} %{$terminfo[bold]$FG[226]%}%~%{$reset_color%}\$(git_prompt_info)\$(ruby_prompt_info) %D - %*
 ╰─$(prompt_char) "
 
