@@ -7,6 +7,14 @@
     email = pawel@owczarczyk.it
     useConfigOnly = true
 
+[credential]
+    # Dla Linux (pamięta hasło przez 1h w RAM):
+    helper = cache --timeout=3600
+    # DLA WINDOWS (odkomentuj poniższe, a zakomentuj cache, jeśli używasz Windows):
+    # helper = manager
+    # DLA MACOS (odkomentuj poniższe, a zakomentuj cache, jeśli używasz macOS):
+    # helper = osxkeychain
+
 [color]
     ui = true
     branch = auto
@@ -81,7 +89,7 @@
     search = branch -a --contains
 
     # Branch management
-    br-arch = !                                                \
+    br-arch = !                                                 \
         git fetch origin --prune --tags                     && \
         git rev-parse --verify origin/$1                    && \
         git tag archive/$1 origin/$1 -m \"`git datetime`\"  && \

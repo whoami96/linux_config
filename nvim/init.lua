@@ -1,6 +1,6 @@
 -- ==========================================================
 -- Paweł Owczarczyk
--- Config for Neovim 0.12.0 STABLE | Ubuntu 24.04
+-- Config for Neovim 0.12.x | Fedora 44
 -- ==========================================================
 
 -- 0) EARLY FILETYPE DETECTION
@@ -21,7 +21,7 @@ vim.filetype.add({
 -- 1) GLOBAL OPTIONS
 vim.g.mapleader = " "
 local opt = vim.opt
-opt.rtp:prepend(vim.fn.stdpath("data") .. "/site")
+
 opt.number = true
 opt.relativenumber = true
 opt.clipboard = "unnamedplus"
@@ -61,26 +61,35 @@ require("lazy").setup({
     priority = 1000,
     config = function()
       vim.cmd.colorscheme("nord")
-      -- Przezroczyste tło pod Ghostty
-      vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-      vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+      local hl_groups = { "Normal", "NormalFloat", "FloatBorder", "SignColumn", "LineNr", "CursorLineNr" }
+      for _, group in ipairs(hl_groups) do
+        vim.api.nvim_set_hl(0, group, { bg = "none" })
+      end
     end,
   },
   { "nvim-tree/nvim-web-devicons", lazy = true },
   { "nvim-lualine/lualine.nvim", opts = { options = { theme = "nord", globalstatus = true } } },
 
-  -- TREESITTER (Native 0.12.0 support)
+  -- TREESITTER (Hybrid Config for 0.11/0.12 compatibility)
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter").setup({
+      local ts_config = {
         ensure_installed = {
           "lua", "bash", "python", "yaml", "terraform", "hcl", "go", "rust", "dockerfile", "markdown", "markdown_inline"
         },
         highlight = { enable = true },
         indent = { enable = true },
-      })
+      }
+
+      -- Próba załadowania starego modułu, jeśli nie istnieje - użycie nowego
+      local ok, configs = pcall(require, "nvim-treesitter.configs")
+      if ok then
+        configs.setup(ts_config)
+      else
+        require("nvim-treesitter").setup(ts_config)
+      end
     end,
   },
 
@@ -88,7 +97,10 @@ require("lazy").setup({
   { "stevearc/oil.nvim", opts = { view_options = { show_hidden = true } } },
   {
     "nvim-telescope/telescope.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", { "nvim-telescope/telescope-fzf-native.nvim", build = "make" } },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      { "nvim-telescope/telescope-fzf-native.nvim", build = "make" }
+    },
     config = function()
       local telescope = require("telescope")
       telescope.setup()
@@ -109,26 +121,24 @@ require("lazy").setup({
     config = function()
       require("mason").setup({ ui = { border = "rounded" } })
       local lspconfig = require("lspconfig")
-      
+
       require("mason-lspconfig").setup({
-        -- Dodajemy ruff do listy
         ensure_installed = { "ansiblels", "terraformls", "yamlls", "pyright", "lua_ls", "gopls", "ruff" },
         handlers = {
           function(server_name)
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
-            
-            -- Specyficzna konfiguracja dla Pyright, aby nie gryzł się z Ruffem
-            if server_name == "pyright" then
+
+            if server_name == "terraformls" then
+              lspconfig.terraformls.setup({
+                capabilities = capabilities,
+                filetypes = { "terraform", "terraform-vars", "hcl" },
+              })
+            elseif server_name == "pyright" then
               lspconfig.pyright.setup({
                 capabilities = capabilities,
                 settings = {
-                  pyright = {
-                    -- Używamy Ruffa do organizowania importów, więc wyłączamy to w Pyright
-                    disableOrganizeImports = true,
-                  },
-                  python = {
-                    analysis = { ignore = { '*' } }, -- Opcjonalnie: pozwól Ruffowi na diagnostykę
-                  }
+                  pyright = { disableOrganizeImports = true },
+                  python = { analysis = { ignore = { '*' } } }
                 }
               })
             else
@@ -142,7 +152,6 @@ require("lazy").setup({
         pattern = "*.py",
         callback = function()
           vim.lsp.buf.format({ async = false })
-          -- Opcjonalnie: ruff organize imports
           vim.lsp.buf.code_action({ context = { only = { "source.organizeImports" } }, apply = true })
         end,
       })
@@ -152,7 +161,10 @@ require("lazy").setup({
   -- AUTOCOMPLETE
   {
     "hrsh7th/nvim-cmp",
-    dependencies = { "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },
+    dependencies = {
+      { "L3MON4D3/LuaSnip", build = "make install_jsregexp" },
+      "saadparwaiz1/cmp_luasnip"
+    },
     config = function()
       local cmp = require("cmp")
       cmp.setup({
